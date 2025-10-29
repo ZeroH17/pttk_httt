@@ -1,7 +1,7 @@
 import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { TraiCay } from './traicay.entity';
 
-@Entity('Kho')
+@Entity('kho')
 export class Kho {
   @PrimaryColumn()
   MaKho!: string;

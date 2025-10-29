@@ -15,8 +15,8 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   host: process.env.DB_HOST || 'localhost',
   port: Number(process.env.DB_PORT) || 3306,
   username: process.env.DB_USERNAME || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_DATABASE || 'quanlytraicay',
+  password: process.env.DB_PASSWORD || 'Hoangvu17',
+  database: process.env.DB_DATABASE || 'fruitshop',
   entities: [NhanVien, KhachHang, HoaDon, DonHang, TraiCay, Kho, DiemThuong],
   synchronize: true, // DEV only
   logging: false

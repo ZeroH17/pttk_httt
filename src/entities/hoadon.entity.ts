@@ -10,7 +10,7 @@ import { NhanVien } from './nhanvien.entity';
 import { KhachHang } from './khachhang.entity';
 import { DonHang } from './donhang.entity';
 
-@Entity('HoaDon')
+@Entity('hoadon')
 export class HoaDon {
   @PrimaryColumn()
   MaHoaDon!: string;

@@ -2,7 +2,7 @@ import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { HoaDon } from './hoadon.entity';
 import { TraiCay } from './traicay.entity';
 
-@Entity('DonHang')
+@Entity('donhang')
 export class DonHang {
   @PrimaryColumn()
   MaDonHang!: string;

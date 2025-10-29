@@ -1,15 +1,20 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import * as cors from 'cors';
 import { config } from 'dotenv';
 config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.use(cors());
-  app.use(express.json ? express.json() : (req,res,next)=>next()); // safe
+
+  app.enableCors({
+    origin: '*', // hoặc ['http://localhost:3000'] nếu frontend cụ thể
+    credentials: true,
+  });
+
+  app.useBodyParser('json'); // hoặc có thể bỏ luôn vì Nest tự bật rồi
+
   const port = process.env.PORT || 3000;
   await app.listen(port);
-  console.log(`🚀 Server chạy tại http://localhost:${port}`);
+  console.log(`Server chạy tại http://localhost:${port}`);
 }
 bootstrap();

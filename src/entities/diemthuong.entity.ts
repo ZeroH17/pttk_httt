@@ -2,7 +2,7 @@ import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { HoaDon } from './hoadon.entity';
 import { KhachHang } from './khachhang.entity';
 
-@Entity('DiemThuong')
+@Entity('diemthuong')
 export class DiemThuong {
   @PrimaryColumn()
   MaDiemThuong!: string;

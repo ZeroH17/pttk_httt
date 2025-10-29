@@ -2,7 +2,7 @@ import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
 import { DonHang } from './donhang.entity';
 import { Kho } from './kho.entity';
 
-@Entity('TraiCay')
+@Entity('traicay')
 export class TraiCay {
   @PrimaryColumn()
   MaTraiCay!: string;

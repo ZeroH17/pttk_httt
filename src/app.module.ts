@@ -6,8 +6,7 @@ import { BaoCaoModule } from './baocao/baocao.module';
 
 @Module({
   imports: [
-    // ❌ Tắt TypeORM khi chưa có DB
-    // TypeOrmModule.forRoot(typeOrmConfig),
+    TypeOrmModule.forRoot(typeOrmConfig),
     DonHangModule,
     BaoCaoModule,
   ],
