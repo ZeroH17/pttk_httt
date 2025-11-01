@@ -7,10 +7,13 @@ export class KhachHang {
   @PrimaryColumn()
   MaKhachHang!: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'nvarchar', length: 100, nullable: true })
+  HoTen!: string;
+
+  @Column({ type: 'nvarchar', length: 15, nullable: true })
   SDT!: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'nvarchar', length: 200, nullable: true })
   DiaChi!: string;
 
   @OneToMany(() => HoaDon, (hd) => hd.khachhang)

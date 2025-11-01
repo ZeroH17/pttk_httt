@@ -7,6 +7,9 @@ export class TraiCay {
   @PrimaryColumn()
   MaTraiCay!: string;
 
+  @Column({ type: 'nvarchar', length: 100, nullable: false })
+  TenTraiCay!: string;
+
   @Column('int', { nullable: true, default: 0 })
   SoLuong!: number;
 
@@ -15,6 +18,9 @@ export class TraiCay {
 
   @Column({ type: 'date', nullable: true })
   NgayNhap!: Date;
+
+  @Column({ type: 'nvarchar', length: 100, nullable: true })
+  XuatXu!: string;
 
   @OneToMany(() => DonHang, (dh) => dh.traicay)
   donhangs!: DonHang[];
