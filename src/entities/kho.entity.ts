@@ -9,10 +9,10 @@ export class Kho {
   @Column()
   MaTraiCay!: string;
 
-  @Column('int', { default: 0 })
+  @Column('int')
   SoLuongSanPham!: number;
 
-  @Column('int', { default: 0 })
+  @Column('int')
   TonKho!: number;
 
   @Column({ type: 'date', nullable: true })
@@ -24,7 +24,8 @@ export class Kho {
   @Column({ nullable: true })
   DiaChi!: string;
 
+  // ✅ Liên kết đúng tới bảng trái cây
   @ManyToOne(() => TraiCay, (tc) => tc.kho)
   @JoinColumn({ name: 'MaTraiCay' })
-  traicay!: TraiCay;
+  traiCay!: TraiCay;
 }

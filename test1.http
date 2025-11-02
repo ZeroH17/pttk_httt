@@ -1,0 +1,21 @@
+### Báo cáo doanh thu theo ngày
+GET http://localhost:3000/report/revenue?period=day
+Content-Type: application/json
+
+### Báo cáo doanh thu theo tuần
+GET http://localhost:3000/report/revenue?period=week
+Content-Type: application/json
+
+### Báo cáo doanh thu theo tháng
+GET http://localhost:3000/report/revenue?period=month
+Content-Type: application/json
+
+
+# ### Báo cáo các loại trái cây bán chạy nhất (top 5)
+# GET http://localhost:3000/report/bestseller?limit=5
+# Content-Type: application/json
+
+
+# ### Báo cáo tồn kho trái cây
+# GET http://localhost:3000/report/inventory
+# Content-Type: application/json

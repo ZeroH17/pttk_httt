@@ -1,11 +1,11 @@
-import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { HoaDon } from './hoadon.entity';
 import { KhachHang } from './khachhang.entity';
 
 @Entity('diemthuong')
 export class DiemThuong {
-  @PrimaryColumn()
-  MaDiemThuong!: string;
+  @PrimaryGeneratedColumn()
+  MaDiemThuong!: number; // INT AUTO_INCREMENT
 
   @Column()
   MaHoaDon!: string;
@@ -16,11 +16,11 @@ export class DiemThuong {
   @Column('int')
   DiemThuong!: number;
 
-  @ManyToOne(() => HoaDon)
+  @ManyToOne(() => HoaDon, (hd) => hd.diemthuongs, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'MaHoaDon' })
   hoadon!: HoaDon;
 
-  @ManyToOne(() => KhachHang, (kh) => kh.diemthuongs)
+  @ManyToOne(() => KhachHang, (kh) => kh.diemthuongs, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'MaKhachHang' })
   khachhang!: KhachHang;
 }
