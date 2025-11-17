@@ -5,7 +5,7 @@ import { TraiCay } from './traicay.entity';
 @Entity('donhang')
 export class DonHang {
   @PrimaryColumn()
-  MaDonHang!: string;
+  MaDonHang!: string; // Có thể tạo tự động bằng UUID hoặc timestamp
 
   @Column()
   MaHoaDon!: string;
@@ -19,9 +19,9 @@ export class DonHang {
   @Column('decimal', { precision: 12, scale: 2 })
   Gia!: number;
 
-  @Column({ nullable: true })
-  SanPham!: string;
-
+  @Column({ type: 'nvarchar', length: 100, nullable: true })
+  SanPham?: string;
+  
   @ManyToOne(() => HoaDon, (hd) => hd.donhangs)
   @JoinColumn({ name: 'MaHoaDon' })
   hoaDon!: HoaDon;

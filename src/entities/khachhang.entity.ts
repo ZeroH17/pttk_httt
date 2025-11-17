@@ -10,6 +10,12 @@ export class KhachHang {
   @Column({ type: 'nvarchar', length: 100, nullable: true })
   HoTen!: string;
 
+  @Column({ type: 'nvarchar', length: 100, nullable: true })
+  Email!: string;
+  
+  @Column({ type: 'nvarchar', length: 255, nullable: true })
+  MatKhau!: string;
+
   @Column({ type: 'nvarchar', length: 15, nullable: true })
   SDT!: string;
 
@@ -22,3 +28,4 @@ export class KhachHang {
   @OneToMany(() => DiemThuong, (dt) => dt.khachhang)
   diemthuongs!: DiemThuong[];
 }
+

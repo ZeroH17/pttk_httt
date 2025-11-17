@@ -22,6 +22,13 @@ export class TraiCay {
   @Column({ type: 'nvarchar', length: 100, nullable: true })
   XuatXu!: string;
 
+  @Column({ type: 'nvarchar', length: 255, nullable: true })
+  img!: string;
+
+  @Column({ type: 'nvarchar', length: 100, nullable: true })
+  tag!: string;
+
+  // Quan hệ
   @OneToMany(() => DonHang, (dh) => dh.traicay)
   donhangs!: DonHang[];
 

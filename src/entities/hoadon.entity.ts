@@ -30,6 +30,10 @@ export class HoaDon {
   @Column({ type: 'text', nullable: true })
   ThongTinKhachHang!: string;
 
+  // ✅ Thêm cột tổng tiền
+  @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
+  TongTien!: number;
+
   @ManyToOne(() => NhanVien, (nv) => nv.hoadons)
   @JoinColumn({ name: 'MaNhanVien' })
   nhanvien!: NhanVien;
