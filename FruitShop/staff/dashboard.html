@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Fruit Staff | Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/staff.css">
+</head>
+
+<body>
+
+<aside class="sidebar">
+  <h2>🍊 FRUIT STAFF</h2>
+  <ul>
+    <li><a href="dashboard.html">Tổng quan</a></li>
+    <li><a href="manage_products.html">Sản phẩm</a></li>
+    <li><a href="manage_orders.html">Đơn hàng</a></li>
+    <li><a href="manage_users.html">Khách hàng</a></li>
+    <li><a href="#" class="logout-btn">Đăng xuất</a></li>
+  </ul>
+</aside>
+
+
+<main class="main">
+
+  <h1>Thống kê nhanh</h1>
+
+  <div class="dashboard-grid">
+
+    <div class="stat-card">
+      <h3>Tổng sản phẩm</h3>
+      <div class="stat-number" id="m_products">0</div>
+    </div>
+
+    <div class="stat-card">
+      <h3>Tổng đơn hàng</h3>
+      <div class="stat-number" id="m_orders">0</div>
+    </div>
+
+    <div class="stat-card">
+      <h3>Trái cây bán chạy nhất</h3>
+      <div class="stat-number" id="m_users">0</div>
+    </div>
+
+    <div class="stat-card">
+      <h3>Báo cáo doanh thu</h3>
+      <div class="stat-number" id="m_revenue">0</div>
+    </div>
+  </div>
+</main>
+<script src="../js/staff.js" defer></script>
+<script src="../js/dashboard.js" defer></script>
+</body>
+</html>
