@@ -24,7 +24,6 @@ export class Kho {
   @Column({ nullable: true })
   DiaChi!: string;
 
-  // ✅ Liên kết đúng tới bảng trái cây
   @ManyToOne(() => TraiCay, (tc) => tc.kho)
   @JoinColumn({ name: 'MaTraiCay' })
   traiCay!: TraiCay;

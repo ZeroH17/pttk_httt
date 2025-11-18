@@ -1,24 +1,5 @@
-import { IsString, IsNotEmpty, IsDateString, IsArray, ValidateNested, IsNumber, Min } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsString, IsNotEmpty, IsDateString, IsNumber, Min } from 'class-validator';
 
-// Chi tiết từng sản phẩm trong đơn hàng
-export class OrderItemDto {
-  @IsString()
-  @IsNotEmpty()
-  MaTraiCay: string;
-
-  @IsNumber()
-  @Min(1)
-  SoLuong: number;
-
-  @IsNumber()
-  @Min(0)
-  Gia: number;
-
-  SanPham?: string; // Tên sản phẩm, optional
-}
-
-// DTO chính để tạo hóa đơn + đơn hàng
 export class CreateOrderDto {
   @IsString()
   @IsNotEmpty()
@@ -33,10 +14,9 @@ export class CreateOrderDto {
   @IsDateString()
   NgayXuatHoaDon: string;
 
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => OrderItemDto)
-  items: OrderItemDto[];
+  @IsNumber()
+  @Min(0)
+  TongTien: number; // tổng tiền từ frontend
 
   ThongTinKhachHang?: string;
   ThongTinSanPham?: string;

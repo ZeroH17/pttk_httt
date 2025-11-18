@@ -1,32 +1,28 @@
-import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm'; 
 import { HoaDon } from './hoadon.entity';
-import { TraiCay } from './traicay.entity';
+
+export enum OrderStatus {
+  PENDING = 'Chờ xử lý',
+  SHIPPING = 'Đang giao',
+  COMPLETED = 'Hoàn tất',
+}
 
 @Entity('donhang')
 export class DonHang {
   @PrimaryColumn()
-  MaDonHang!: string; // Có thể tạo tự động bằng UUID hoặc timestamp
+  MaDonHang!: string;
 
   @Column()
   MaHoaDon!: string;
 
-  @Column()
-  MaTraiCay!: string;
+  @Column({
+    type: 'enum',
+    enum: OrderStatus,
+    default: OrderStatus.PENDING,
+  })
+  TrangThai!: OrderStatus;
 
-  @Column('int')
-  SoLuong!: number;
-
-  @Column('decimal', { precision: 12, scale: 2 })
-  Gia!: number;
-
-  @Column({ type: 'nvarchar', length: 100, nullable: true })
-  SanPham?: string;
-  
   @ManyToOne(() => HoaDon, (hd) => hd.donhangs)
   @JoinColumn({ name: 'MaHoaDon' })
   hoaDon!: HoaDon;
-
-  @ManyToOne(() => TraiCay, (tc) => tc.donhangs)
-  @JoinColumn({ name: 'MaTraiCay' })
-  traicay!: TraiCay;
 }
