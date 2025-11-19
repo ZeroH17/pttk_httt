@@ -16,30 +16,33 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `nhanvien`
+-- Table structure for table `diemthuong`
 --
 
-DROP TABLE IF EXISTS `nhanvien`;
+DROP TABLE IF EXISTS `diemthuong`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `nhanvien` (
-  `NgaySinh` date DEFAULT NULL,
-  `DiaChi` varchar(255) DEFAULT NULL,
-  `MaNhanVien` varchar(255) NOT NULL,
-  `HoVaTen` varchar(255) DEFAULT NULL,
-  `SoDienThoai` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`MaNhanVien`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `diemthuong` (
+  `DiemThuong` int NOT NULL,
+  `MaHoaDon` varchar(255) NOT NULL,
+  `MaKhachHang` varchar(255) NOT NULL,
+  `MaDiemThuong` int NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`MaDiemThuong`),
+  KEY `FK_470d41e7314fe395122e6242939` (`MaHoaDon`),
+  KEY `FK_163a85e21f847d21a537382ef46` (`MaKhachHang`),
+  CONSTRAINT `FK_163a85e21f847d21a537382ef46` FOREIGN KEY (`MaKhachHang`) REFERENCES `khachhang` (`MaKhachHang`) ON DELETE CASCADE,
+  CONSTRAINT `FK_470d41e7314fe395122e6242939` FOREIGN KEY (`MaHoaDon`) REFERENCES `hoadon` (`MaHoaDon`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `nhanvien`
+-- Dumping data for table `diemthuong`
 --
 
-LOCK TABLES `nhanvien` WRITE;
-/*!40000 ALTER TABLE `nhanvien` DISABLE KEYS */;
-INSERT INTO `nhanvien` VALUES ('1990-01-01','Hà Nội','NV001','Nguyen Van A','0909123456');
-/*!40000 ALTER TABLE `nhanvien` ENABLE KEYS */;
+LOCK TABLES `diemthuong` WRITE;
+/*!40000 ALTER TABLE `diemthuong` DISABLE KEYS */;
+INSERT INTO `diemthuong` VALUES (15,'HD001','KH001',1),(10,'HD002','KH002',2),(8,'HD003','KH003',3);
+/*!40000 ALTER TABLE `diemthuong` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -51,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-02 22:11:42
+-- Dump completed on 2025-11-18 21:10:00

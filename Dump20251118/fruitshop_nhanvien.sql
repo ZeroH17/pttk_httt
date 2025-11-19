@@ -16,33 +16,30 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `kho`
+-- Table structure for table `nhanvien`
 --
 
-DROP TABLE IF EXISTS `kho`;
+DROP TABLE IF EXISTS `nhanvien`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `kho` (
-  `SoLuongSanPham` int NOT NULL,
-  `TonKho` int NOT NULL,
-  `NgayNhapKho` date DEFAULT NULL,
-  `NgayXuatKho` date DEFAULT NULL,
+CREATE TABLE `nhanvien` (
+  `NgaySinh` date DEFAULT NULL,
   `DiaChi` varchar(255) DEFAULT NULL,
-  `MaKho` varchar(255) NOT NULL,
-  `MaTraiCay` varchar(255) NOT NULL,
-  PRIMARY KEY (`MaKho`),
-  KEY `FK_bc959e57e1d71eaefa8b0c3577f` (`MaTraiCay`),
-  CONSTRAINT `FK_bc959e57e1d71eaefa8b0c3577f` FOREIGN KEY (`MaTraiCay`) REFERENCES `traicay` (`MaTraiCay`)
+  `MaNhanVien` varchar(255) NOT NULL,
+  `HoVaTen` varchar(255) DEFAULT NULL,
+  `SoDienThoai` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`MaNhanVien`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `kho`
+-- Dumping data for table `nhanvien`
 --
 
-LOCK TABLES `kho` WRITE;
-/*!40000 ALTER TABLE `kho` DISABLE KEYS */;
-/*!40000 ALTER TABLE `kho` ENABLE KEYS */;
+LOCK TABLES `nhanvien` WRITE;
+/*!40000 ALTER TABLE `nhanvien` DISABLE KEYS */;
+INSERT INTO `nhanvien` VALUES ('1990-01-01','Hà Nội','NV001','Nguyen Van A','0909123456');
+/*!40000 ALTER TABLE `nhanvien` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -54,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-02 22:11:42
+-- Dump completed on 2025-11-18 21:10:00

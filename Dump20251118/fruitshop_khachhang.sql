@@ -16,35 +16,31 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `donhang`
+-- Table structure for table `khachhang`
 --
 
-DROP TABLE IF EXISTS `donhang`;
+DROP TABLE IF EXISTS `khachhang`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `donhang` (
-  `SoLuong` int NOT NULL,
-  `Gia` decimal(12,2) NOT NULL,
-  `MaDonHang` varchar(255) NOT NULL,
-  `MaHoaDon` varchar(255) NOT NULL,
-  `MaTraiCay` varchar(255) NOT NULL,
-  `SanPham` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`MaDonHang`),
-  KEY `FK_881e7e4b6c294d60070f25438c6` (`MaHoaDon`),
-  KEY `FK_4c612a2c4426ca3f0ee392ccca6` (`MaTraiCay`),
-  CONSTRAINT `FK_4c612a2c4426ca3f0ee392ccca6` FOREIGN KEY (`MaTraiCay`) REFERENCES `traicay` (`MaTraiCay`),
-  CONSTRAINT `FK_881e7e4b6c294d60070f25438c6` FOREIGN KEY (`MaHoaDon`) REFERENCES `hoadon` (`MaHoaDon`)
+CREATE TABLE `khachhang` (
+  `MaKhachHang` varchar(255) NOT NULL,
+  `HoTen` varchar(100) DEFAULT NULL,
+  `SDT` varchar(15) DEFAULT NULL,
+  `DiaChi` varchar(200) DEFAULT NULL,
+  `Email` varchar(100) DEFAULT NULL,
+  `MatKhau` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`MaKhachHang`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `donhang`
+-- Dumping data for table `khachhang`
 --
 
-LOCK TABLES `donhang` WRITE;
-/*!40000 ALTER TABLE `donhang` DISABLE KEYS */;
-INSERT INTO `donhang` VALUES (3,30000.00,'DH001','HD001','TC001','');
-/*!40000 ALTER TABLE `donhang` ENABLE KEYS */;
+LOCK TABLES `khachhang` WRITE;
+/*!40000 ALTER TABLE `khachhang` DISABLE KEYS */;
+INSERT INTO `khachhang` VALUES ('KH001','Nguyễn Văn A','0988765432','TP. Hồ Chí Minh',NULL,NULL),('KH002','Trần Thị B','0912345678','Hà Nội',NULL,NULL),('KH003','Lê Văn C','0988777666','Đà Nẵng',NULL,NULL),('KH004','Phạm Thị D','0977555444','Cần Thơ',NULL,NULL),('KH005','Vũ Hoàng',NULL,NULL,'hoangdepzai17102005@gmail.com','$2b$10$FeHaK.qUeFKO4W2YJ98IZ.chNS04XpHidJLiDsK3HvOKAVFMzSmqm');
+/*!40000 ALTER TABLE `khachhang` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -56,4 +52,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-02 22:11:42
+-- Dump completed on 2025-11-18 21:10:00
