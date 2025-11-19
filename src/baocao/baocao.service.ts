@@ -1,89 +1,164 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DonHang } from '../entities/donhang.entity';
-import { Repository } from 'typeorm';
-import { TraiCay } from '../entities/traicay.entity';
-import { Kho } from '../entities/kho.entity';
+import { Repository, MoreThanOrEqual } from 'typeorm';
 import { HoaDon } from '../entities/hoadon.entity';
 
 @Injectable()
 export class BaoCaoService {
   constructor(
-    @InjectRepository(DonHang) private donHangRepo: Repository<DonHang>,
-    @InjectRepository(TraiCay) private traicayRepo: Repository<TraiCay>,
-    @InjectRepository(Kho) private khoRepo: Repository<Kho>,
-    @InjectRepository(HoaDon) private hoadonRepo: Repository<HoaDon>
+    @InjectRepository(HoaDon)
+    private hoaDonRepo: Repository<HoaDon>,
   ) {}
 
-  // Doanh thu theo day | week | month
-  async revenueReport(type: 'day' | 'week' | 'month', from?: string, to?: string) {
-    // Build raw SQL because GROUP BY date functions simpler
-    const conn = this.donHangRepo.manager.connection;
-    let selectExpr = '';
-    if (type === 'day') {
-      selectExpr = `DATE(h.NgayXuatHoaDon) as ThoiGian`;
-    } else if (type === 'week') {
-      selectExpr = `YEAR(h.NgayXuatHoaDon) as Nam, WEEK(h.NgayXuatHoaDon,1) as Tuan`;
-    } else {
-      selectExpr = `YEAR(h.NgayXuatHoaDon) as Nam, MONTH(h.NgayXuatHoaDon) as Thang`;
-    }
+  // ================================
+  // 🔹 1. Dashboard tổng hợp
+  // ================================
+  async getDashboardStats() {
+    const now = new Date();
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(now.getDate() - 7);
 
-    let whereClause = '';
-    const params: any[] = [];
-    if (from && to) {
-      whereClause = `WHERE h.NgayXuatHoaDon BETWEEN ? AND ?`;
-      params.push(from, to);
-    }
+    const allInvoices = await this.hoaDonRepo.find();
+    const recentInvoices = await this.hoaDonRepo.find({
+      where: { NgayXuatHoaDon: MoreThanOrEqual(sevenDaysAgo) },
+    });
 
-    // Sum Gia * SoLuong per DonHang
-    const sql = `
-      SELECT ${selectExpr},
-             SUM(d.Gia * d.SoLuong) as TongDoanhThu
-      FROM DonHang d
-      JOIN HoaDon h ON d.MaHoaDon = h.MaHoaDon
-      ${whereClause}
-      GROUP BY ${ type === 'day' ? 'DATE(h.NgayXuatHoaDon)' : (type === 'week' ? 'YEAR(h.NgayXuatHoaDon), WEEK(h.NgayXuatHoaDon,1)' : 'YEAR(h.NgayXuatHoaDon), MONTH(h.NgayXuatHoaDon)') }
-      ORDER BY ThoiGian DESC;
-    `;
+    // Tổng đơn hàng
+    const totalOrders = allInvoices.length;
 
-    const rawResult = await conn.query(sql, params);
-    return rawResult;
-  }
+    // Tổng doanh thu
+    const totalRevenue = allInvoices.reduce(
+      (sum, hd) => sum + Number(hd.TongTien || 0),
+      0,
+    );
 
-  // Top selling fruits
-  async topSellingFruits(limit = 10) {
-    const qb = this.donHangRepo.createQueryBuilder('d')
-      .select('d.MaTraiCay', 'MaTraiCay')
-      .addSelect('SUM(d.SoLuong)', 'TongBan')
-      .groupBy('d.MaTraiCay')
-      .orderBy('TongBan', 'DESC')
-      .limit(limit);
+    // Tổng sản phẩm đã bán & bán chạy
+    let totalProductsSold = 0;
+    const recentFruitSales: Record<string, number> = {};
 
-    const rows = await qb.getRawMany();
-    // Join with TraiCay info
-    const result = [];
-    for (const r of rows) {
-      const tc = await this.traicayRepo.findOne({ where: { MaTraiCay: r.MaTraiCay } });
-      result.push({
-        MaTraiCay: r.MaTraiCay,
-        Ten: tc ? tc.MaTraiCay : null,
-        GiaTien: tc ? tc.GiaTien : null,
-        TongBan: Number(r.TongBan)
+    recentInvoices.forEach(invoice => {
+      if (!invoice.ThongTinSanPham) return;
+
+      let products: { TenTraiCay: string; SoLuong: number }[] = [];
+      try {
+        products = JSON.parse(invoice.ThongTinSanPham);
+      } catch (err) {
+        console.error("Lỗi parse ThongTinSanPham:", invoice.ThongTinSanPham, err);
+        return;
+      }
+
+      products.forEach(p => {
+        const qty = Number(p.SoLuong) || 0;
+        totalProductsSold += qty;
+
+        if (!recentFruitSales[p.TenTraiCay]) recentFruitSales[p.TenTraiCay] = 0;
+        recentFruitSales[p.TenTraiCay] += qty;
       });
+    });
+
+    // Trái cây bán chạy nhất
+    let bestFruit = null;
+    let maxSold = 0;
+    for (const name in recentFruitSales) {
+      if (recentFruitSales[name] > maxSold) {
+        maxSold = recentFruitSales[name];
+        bestFruit = { TenTraiCay: name, SoLuongBan: maxSold };
+      }
     }
-    return result;
+
+    return {
+      totalOrders,
+      totalProductsSold,
+      totalRevenue,
+      bestFruit: bestFruit || null,
+    };
   }
 
-  // Inventory report
+  // ================================
+  // 🔹 2. Doanh thu theo type (day/week/month/year)
+  // ================================
+  async revenueReport(
+    type: 'day' | 'week' | 'month' | 'year',
+    from?: string,
+    to?: string,
+  ) {
+    let invoices = await this.hoaDonRepo.find();
+
+    if (from) {
+      const fromDate = new Date(from);
+      invoices = invoices.filter(inv => new Date(inv.NgayXuatHoaDon) >= fromDate);
+    }
+    if (to) {
+      const toDate = new Date(to);
+      invoices = invoices.filter(inv => new Date(inv.NgayXuatHoaDon) <= toDate);
+    }
+
+    const revenueMap: Record<string, number> = {};
+
+    invoices.forEach(hd => {
+      if (!hd.NgayXuatHoaDon || !hd.TongTien) return;
+
+      const date = new Date(hd.NgayXuatHoaDon);
+      let key = '';
+
+      switch (type) {
+        case 'day':
+          key = date.toISOString().split('T')[0]; // YYYY-MM-DD
+          break;
+        case 'week':
+          const onejan = new Date(date.getFullYear(),0,1);
+          const week = Math.ceil((((date.getTime() - onejan.getTime()) / 86400000) + onejan.getDay()+1)/7);
+          key = `Tuần ${week} - ${date.getFullYear()}`;
+          break;
+        case 'month':
+          key = `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2,'0')}`;
+          break;
+        case 'year':
+          key = `${date.getFullYear()}`;
+          break;
+      }
+
+      revenueMap[key] = (revenueMap[key] || 0) + Number(hd.TongTien);
+    });
+
+    return Object.entries(revenueMap)
+      .map(([label, value]) => ({ label, value }))
+      .sort((a, b) => (a.label > b.label ? 1 : -1));
+  }
+
+  // ================================
+  // 🔹 3. Top trái cây bán chạy
+  // ================================
+  async topSellingFruits(limit = 10) {
+    const allInvoices = await this.hoaDonRepo.find();
+    const fruitSales: Record<string, number> = {};
+
+    allInvoices.forEach(inv => {
+      if (!inv.ThongTinSanPham) return;
+
+      let products: { TenTraiCay: string; SoLuong: number }[] = [];
+      try {
+        products = JSON.parse(inv.ThongTinSanPham);
+      } catch { return; }
+
+      products.forEach(p => {
+        const qty = Number(p.SoLuong) || 0;
+        if (!fruitSales[p.TenTraiCay]) fruitSales[p.TenTraiCay] = 0;
+        fruitSales[p.TenTraiCay] += qty;
+      });
+    });
+
+    return Object.entries(fruitSales)
+      .sort((a,b) => b[1]-a[1])
+      .slice(0, limit)
+      .map(([TenTraiCay, SoLuongBan]) => ({ TenTraiCay, SoLuongBan }));
+  }
+
+  // ================================
+  // 🔹 4. Báo cáo tồn kho (ví dụ)
+  // ================================
   async inventoryReport() {
-    // Join Kho & TraiCay
-    return this.khoRepo.createQueryBuilder('k')
-      .leftJoinAndSelect('k.traicay', 'tc')
-      .select([
-        'k.MaTraiCay as MaTraiCay',
-        'tc.GiaTien as GiaTien',
-        'k.SoLuongSanPham as SoLuongSanPham',
-        'k.TonKho as TonKho'
-      ]).getRawMany();
+    // TODO: triển khai nếu có bảng sản phẩm tồn kho
+    return { message: "Chưa có dữ liệu tồn kho" };
   }
 }

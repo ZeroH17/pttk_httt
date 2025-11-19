@@ -5,26 +5,33 @@ import { BaoCaoService } from './baocao.service';
 export class BaoCaoController {
   constructor(private readonly bcService: BaoCaoService) {}
 
-  // /baocao/doanhthu?type=day|week|month&from=2025-01-01&to=2025-01-31
+  // Dashboard tổng hợp
+  @Get('dashboard')
+  async dashboard() {
+    return this.bcService.getDashboardStats();
+  }
+
+  // Doanh thu theo ngày/tuần/tháng/năm
   @Get('doanhthu')
   async doanhthu(
     @Query('type') type: string,
-    @Query('from') from: string,
-    @Query('to') to: string,
+    @Query('from') from?: string,
+    @Query('to') to?: string,
   ) {
-    if (!type || !['day', 'week', 'month'].includes(type))
-      return { error: 'type phải là day|week|month' };
+    if (!type || !['day','week','month','year'].includes(type)) {
+      return { error: 'type phải là day|week|month|year' };
+    }
     return this.bcService.revenueReport(type as any, from, to);
   }
 
-  // /baocao/banchay?limit=10
+  // Top trái cây bán chạy
   @Get('banchay')
   async banchay(@Query('limit') limit = '10') {
     const n = Number(limit) || 10;
     return this.bcService.topSellingFruits(n);
   }
 
-  // /baocao/tonkho
+  // Báo cáo tồn kho
   @Get('tonkho')
   async tonkho() {
     return this.bcService.inventoryReport();

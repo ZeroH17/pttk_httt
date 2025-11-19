@@ -50,13 +50,28 @@ export class DonHangService {
     const lastHD = await this.getLastInvoiceCode();
     const newMaHoaDon = this.generateNextCode('HD', lastHD);
 
+    // --- Chuyển ThongTinSanPham từ text sang JSON ---
+    // Ví dụ: "Dưa hấu x2, Cam sành x3"
+    let products: { TenTraiCay: string; SoLuong: number }[] = [];
+
+    if (dto.ThongTinSanPham) {
+      products = dto.ThongTinSanPham.split(',').map(item => {
+        const match = item.trim().match(/^(.+?)\s*x(\d+)$/i);
+        if (match) {
+          return { TenTraiCay: match[1].trim(), SoLuong: parseInt(match[2], 10) };
+        }
+        // Nếu không có x số lượng thì mặc định 1
+        return { TenTraiCay: item.trim(), SoLuong: 1 };
+      });
+    }
+
     const hoadon = this.hoaDonRepo.create({
       MaHoaDon: newMaHoaDon,
       MaNhanVien: dto.MaNhanVien,
       MaKhachHang: dto.MaKhachHang,
       NgayXuatHoaDon: new Date(dto.NgayXuatHoaDon),
       ThongTinKhachHang: dto.ThongTinKhachHang || '',
-      ThongTinSanPham: dto.ThongTinSanPham || '',
+      ThongTinSanPham: JSON.stringify(products),
       TongTien: dto.TongTien || 0,
     });
     await this.hoaDonRepo.save(hoadon);
@@ -78,6 +93,7 @@ export class DonHangService {
       MaDonHang: newMaDonHang,
     };
   }
+
 
   // Cập nhật trạng thái đơn hàng
   async updateOrderStatus(MaDonHang: string, status: OrderStatus) {

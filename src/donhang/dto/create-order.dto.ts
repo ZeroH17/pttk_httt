@@ -1,9 +1,9 @@
-import { IsString, IsNotEmpty, IsDateString, IsNumber, Min } from 'class-validator';
+import { IsString, IsNotEmpty, IsDateString, IsNumber, Min, IsOptional } from 'class-validator';
 
 export class CreateOrderDto {
   @IsString()
-  @IsNotEmpty()
-  MaHoaDon: string;
+  @IsOptional()  // Thêm @IsOptional
+  MaHoaDon?: string;
 
   @IsString()
   MaNhanVien: string;
@@ -16,7 +16,7 @@ export class CreateOrderDto {
 
   @IsNumber()
   @Min(0)
-  TongTien: number; // tổng tiền từ frontend
+  TongTien: number;
 
   ThongTinKhachHang?: string;
   ThongTinSanPham?: string;
