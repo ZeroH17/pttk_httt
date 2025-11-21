@@ -40,11 +40,16 @@ export class BaoCaoService {
       if (!invoice.ThongTinSanPham) return;
 
       let products: { TenTraiCay: string; SoLuong: number }[] = [];
+
       try {
+        // Thử parse JSON
         products = JSON.parse(invoice.ThongTinSanPham);
-      } catch (err) {
-        console.error("Lỗi parse ThongTinSanPham:", invoice.ThongTinSanPham, err);
-        return;
+      } catch {
+        // Nếu dữ liệu là CSV hoặc text
+        products = invoice.ThongTinSanPham.split(",").map(name => ({
+          TenTraiCay: name.trim(),
+          SoLuong: 1, // mặc định mỗi sản phẩm 1
+        }));
       }
 
       products.forEach(p => {
@@ -137,9 +142,15 @@ export class BaoCaoService {
       if (!inv.ThongTinSanPham) return;
 
       let products: { TenTraiCay: string; SoLuong: number }[] = [];
+
       try {
         products = JSON.parse(inv.ThongTinSanPham);
-      } catch { return; }
+      } catch {
+        products = inv.ThongTinSanPham.split(",").map(name => ({
+          TenTraiCay: name.trim(),
+          SoLuong: 1,
+        }));
+      }
 
       products.forEach(p => {
         const qty = Number(p.SoLuong) || 0;
@@ -152,13 +163,5 @@ export class BaoCaoService {
       .sort((a,b) => b[1]-a[1])
       .slice(0, limit)
       .map(([TenTraiCay, SoLuongBan]) => ({ TenTraiCay, SoLuongBan }));
-  }
-
-  // ================================
-  // 🔹 4. Báo cáo tồn kho (ví dụ)
-  // ================================
-  async inventoryReport() {
-    // TODO: triển khai nếu có bảng sản phẩm tồn kho
-    return { message: "Chưa có dữ liệu tồn kho" };
   }
 }
