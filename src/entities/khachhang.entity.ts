@@ -12,7 +12,7 @@ export class KhachHang {
 
   @Column({ type: 'nvarchar', length: 100, nullable: true })
   Email!: string;
-  
+
   @Column({ type: 'nvarchar', length: 255, nullable: true })
   MatKhau!: string;
 
@@ -22,10 +22,13 @@ export class KhachHang {
   @Column({ type: 'nvarchar', length: 200, nullable: true })
   DiaChi!: string;
 
+  // ⚡ Thêm cột trạng thái tài khoản
+  @Column({ type: 'boolean', default: false })
+  isLocked!: boolean;
+
   @OneToMany(() => HoaDon, (hd) => hd.khachhang)
   hoadons!: HoaDon[];
 
   @OneToMany(() => DiemThuong, (dt) => dt.khachhang)
   diemthuongs!: DiemThuong[];
 }
-

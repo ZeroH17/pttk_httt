@@ -1,23 +1,2 @@
-### Tạo đơn hàng
-POST http://localhost:3000/donhang
-Content-Type: application/json
+DELETE http://localhost:3000/traicay/TC017
 
-{
-  "MaHoaDon": "HD001",
-  "MaNhanVien": "NV001",
-  "MaKhachHang": "KH001",
-  "NgayXuatHoaDon": "2025-10-26T00:00:00Z",
-  "items": [
-    {
-      "MaDonHang": "DH001",
-      "MaTraiCay": "TC001",
-      "SoLuong": 3,
-      "Gia": 30000
-    }
-  ],
-  "ThongTinKhachHang": "Nguyen Van A",
-  "ThongTinSanPham": "Xoài cát Hòa Lộc"
-}
-
-### Tìm đơn hàng theo ngày
-GET http://localhost:3000/donhang/search?from=2025-10-01&to=2025-10-26
