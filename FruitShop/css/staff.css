@@ -453,3 +453,45 @@ body {
   font-size: 14px;
   word-break: break-word;
 }
+
+.dashboard-grid {
+  display: flex;
+  flex-direction: column; /* Xếp dọc */
+  gap: 15px;
+  margin-bottom: 30px;
+  width: 200px; /* chiều ngang cho nút */
+}
+
+
+.stat-card {
+  background: #f5f5f5;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.2s;
+}
+
+.stat-card:hover {
+  transform: scale(1.05);
+}
+
+.stat-number {
+  font-size: 28px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.stat-card select {
+  margin-top: 10px;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.stat-card button {
+  margin-top: 10px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+

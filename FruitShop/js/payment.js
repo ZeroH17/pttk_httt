@@ -1,7 +1,7 @@
 console.log("payment.js loaded");
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Lấy user đã login
+  // --- Lấy thông tin user đã login ---
   const user = JSON.parse(localStorage.getItem("user")) || null;
 
   const fullnameInput = document.getElementById("fullname");
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     emailInput.value = user.Email || "";
   }
 
-  // GIỎ HÀNG
+  // --- GIỎ HÀNG ---
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
   const cartList = document.getElementById("cartList");
   const cartCount = document.getElementById("cartCount");
@@ -45,34 +45,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   renderCart();
 
-  // API tạo mã tự động
-  async function generateOrderCode() {
-    try {
-      const res = await fetch("http://localhost:3000/donhang/auto/last-order-code");
-      const data = await res.json();
-      const lastCode = data.lastCode || "DH000";
-      const number = parseInt(lastCode.replace("DH", "")) + 1;
-      return "DH" + number.toString().padStart(3, "0");
-    } catch {
-      return "DH001";
-    }
-  }
-
-  async function generateInvoiceCode() {
-    try {
-      const res = await fetch("http://localhost:3000/donhang/auto/last-invoice-code");
-      const data = await res.json();
-      const lastCode = data.lastCode || "HD000";
-      const number = parseInt(lastCode.replace("HD", "")) + 1;
-      return "HD" + number.toString().padStart(3, "0");
-    } catch {
-      return "HD001";
-    }
-  }
-
-  // ĐẶT HÀNG
+  // --- NÚT ĐẶT HÀNG ---
   const btnPlaceOrder = document.getElementById("placeOrder");
-
   if (!btnPlaceOrder) {
     console.error("Không tìm thấy nút đặt hàng!");
     return;
@@ -80,14 +54,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   btnPlaceOrder.addEventListener("click", async (e) => {
     e.preventDefault();
-    console.log("Nút Đặt hàng đã click");
 
     if (cart.length === 0) {
       alert("Giỏ hàng đang trống!");
       return;
     }
 
-    // LẤY THÔNG TIN KHÁCH HÀNG
+    // --- LẤY THÔNG TIN KHÁCH HÀNG ---
     const fullname = fullnameInput.value.trim();
     const address = addressInput.value.trim();
     const phone = phoneInput.value.trim();
@@ -109,19 +82,20 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Tính tổng tiền giỏ hàng
+    // --- TÍNH TỔNG TIỀN ---
     const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
 
-    // Tạo payload gửi lên backend
+    // --- CHUYỂN GIỎ HÀNG SANG TEXT ---
+    const productsText = cart.map(item => `${item.name} x${item.qty}`).join(", ");
+
+    // --- TẠO PAYLOAD GỬI LÊN BACKEND ---
     const orderPayload = {
-      MaHoaDon: await generateInvoiceCode(),
-      MaDonHang: await generateOrderCode(),
       MaNhanVien: "NV001",
       MaKhachHang: user ? user.MaKhachHang : "KH000",
       NgayXuatHoaDon: new Date().toISOString(),
       ThongTinKhachHang: `Họ tên: ${fullname}, Giới tính: ${gender}, Địa chỉ: ${address}, SDT: ${phone}, Email: ${email}, Thanh toán: ${paymentMethod}`,
-      ThongTinSanPham: cart.map(c => c.name).join(", "),
-      TongTien: totalPrice 
+      ThongTinSanPham: productsText,
+      TongTien: totalPrice
     };
 
     console.log("ORDER PAYLOAD:", orderPayload);

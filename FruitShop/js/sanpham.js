@@ -1,4 +1,3 @@
-// ======== CẤU HÌNH ========
 const productsPerPage = 6;
 let currentPage = 1;
 
