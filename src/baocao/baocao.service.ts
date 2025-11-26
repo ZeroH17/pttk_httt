@@ -14,68 +14,44 @@ export class BaoCaoService {
   // 🔹 1. Dashboard tổng hợp
   // ================================
   async getDashboardStats() {
-    const now = new Date();
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(now.getDate() - 7);
-
     const allInvoices = await this.hoaDonRepo.find();
-    const recentInvoices = await this.hoaDonRepo.find({
-      where: { NgayXuatHoaDon: MoreThanOrEqual(sevenDaysAgo) },
-    });
-
-    // Tổng đơn hàng
-    const totalOrders = allInvoices.length;
-
-    // Tổng doanh thu
-    const totalRevenue = allInvoices.reduce(
-      (sum, hd) => sum + Number(hd.TongTien || 0),
-      0,
-    );
-
-    // Tổng sản phẩm đã bán & bán chạy
     let totalProductsSold = 0;
-    const recentFruitSales: Record<string, number> = {};
+    let totalRevenue = 0;
+    let fruitSales: Record<string, number> = {};
 
-    recentInvoices.forEach(invoice => {
-      if (!invoice.ThongTinSanPham) return;
+    allInvoices.forEach(inv => {
+      totalRevenue += Number(inv.TongTien || 0);
+      if (!inv.ThongTinSanPham) return;
 
       let products: { TenTraiCay: string; SoLuong: number }[] = [];
-
       try {
-        // Thử parse JSON
-        products = JSON.parse(invoice.ThongTinSanPham);
+        products = JSON.parse(inv.ThongTinSanPham);
       } catch {
-        // Nếu dữ liệu là CSV hoặc text
-        products = invoice.ThongTinSanPham.split(",").map(name => ({
+        products = inv.ThongTinSanPham.split(",").map(name => ({
           TenTraiCay: name.trim(),
-          SoLuong: 1, // mặc định mỗi sản phẩm 1
+          SoLuong: 1,
         }));
       }
 
       products.forEach(p => {
         const qty = Number(p.SoLuong) || 0;
         totalProductsSold += qty;
-
-        if (!recentFruitSales[p.TenTraiCay]) recentFruitSales[p.TenTraiCay] = 0;
-        recentFruitSales[p.TenTraiCay] += qty;
+        if (!fruitSales[p.TenTraiCay]) fruitSales[p.TenTraiCay] = 0;
+        fruitSales[p.TenTraiCay] += qty;
       });
     });
 
-    // Trái cây bán chạy nhất
-    let bestFruit = null;
-    let maxSold = 0;
-    for (const name in recentFruitSales) {
-      if (recentFruitSales[name] > maxSold) {
-        maxSold = recentFruitSales[name];
-        bestFruit = { TenTraiCay: name, SoLuongBan: maxSold };
-      }
-    }
+    // Lấy top 5 trái cây bán chạy
+    const topFruits = Object.entries(fruitSales)
+      .sort((a,b) => b[1]-a[1])
+      .slice(0, 5)
+      .map(([TenTraiCay, SoLuongBan]) => ({ TenTraiCay, SoLuongBan }));
 
     return {
-      totalOrders,
+      totalOrders: allInvoices.length,
       totalProductsSold,
       totalRevenue,
-      bestFruit: bestFruit || null,
+      topFruits,
     };
   }
 

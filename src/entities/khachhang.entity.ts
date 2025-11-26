@@ -22,7 +22,6 @@ export class KhachHang {
   @Column({ type: 'nvarchar', length: 200, nullable: true })
   DiaChi!: string;
 
-  // ⚡ Thêm cột trạng thái tài khoản
   @Column({ type: 'boolean', default: false })
   isLocked!: boolean;
 

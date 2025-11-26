@@ -10,9 +10,6 @@ export class BaoCaoService {
     private hoaDonRepo: Repository<HoaDon>,
   ) {}
 
-  // ================================
-  // 🔹 1. Dashboard tổng hợp
-  // ================================
   async getDashboardStats() {
     const now = new Date();
     const sevenDaysAgo = new Date();
@@ -79,9 +76,7 @@ export class BaoCaoService {
     };
   }
 
-  // ================================
-  // 🔹 2. Doanh thu theo type (day/week/month/year)
-  // ================================
+  // Doanh thu theo type (day/week/month/year)
   async revenueReport(
     type: 'day' | 'week' | 'month' | 'year',
     from?: string,
@@ -131,9 +126,7 @@ export class BaoCaoService {
       .sort((a, b) => (a.label > b.label ? 1 : -1));
   }
 
-  // ================================
-  // 🔹 3. Top trái cây bán chạy
-  // ================================
+  // 3.Top trái cây bán chạy
   async topSellingFruits(limit = 10) {
     const allInvoices = await this.hoaDonRepo.find();
     const fruitSales: Record<string, number> = {};

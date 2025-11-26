@@ -53,13 +53,10 @@ export class ReportService {
 
     return data;
   }
-
-  // 🍎 Trái cây bán chạy nhất
   async getBestSellingFruits(limit: number = 5) {
-    // ✅ Đảm bảo entity DonHang có quan hệ ManyToOne(() => TraiCay, (tc) => tc.donhangs)
     const data = await this.donHangRepo
       .createQueryBuilder('dh')
-      .innerJoin('dh.traicay', 'tc') // viết đúng tên property trong DonHang entity!
+      .innerJoin('dh.traicay', 'tc')
       .select('tc.TenTraiCay', 'tenTraiCay')
       .addSelect('SUM(dh.SoLuong)', 'tongSoLuong')
       .groupBy('tc.TenTraiCay')
@@ -70,9 +67,7 @@ export class ReportService {
     return data;
   }
 
-  // 📦 Báo cáo tồn kho
   async getInventory() {
-    // ✅ Đảm bảo entity Kho có property tên "traiCay"
     const data = await this.khoRepo.find({
       relations: ['traiCay'],
     });

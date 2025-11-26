@@ -1,15 +1,16 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { HoaDon } from '../entities/hoadon.entity';
-import { DonHang } from '../entities/donhang.entity';
-import { TraiCay } from '../entities/traicay.entity';
-import { Kho } from '../entities/kho.entity';
-import { DonHangService } from './donhang.service';
 import { DonHangController } from './donhang.controller';
+import { DonHangService } from './donhang.service';
+import { DiemThuongController } from '../diemthuong/diemthuong.controller';
+import { DonHang } from '../entities/donhang.entity';
+import { HoaDon } from '../entities/hoadon.entity';
+import { TraiCay } from '../entities/traicay.entity';
+import { DiemThuong } from '../entities/diemthuong.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([HoaDon, DonHang, TraiCay, Kho])],
+  imports: [TypeOrmModule.forFeature([DonHang, HoaDon, TraiCay, DiemThuong])],
+  controllers: [DonHangController, DiemThuongController],
   providers: [DonHangService],
-  controllers: [DonHangController]
 })
 export class DonHangModule {}

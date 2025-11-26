@@ -1,3 +1,4 @@
+// baocao.controller.ts
 import { Controller, Get, Query } from '@nestjs/common';
 import { BaoCaoService } from './baocao.service';
 
@@ -24,7 +25,7 @@ export class BaoCaoController {
     return this.bcService.revenueReport(type as any, from, to);
   }
 
-  // Top trái cây bán chạy
+  // Top trái cây bán chạy (riêng nếu cần)
   @Get('banchay')
   async banchay(@Query('limit') limit = '10') {
     const n = Number(limit) || 10;

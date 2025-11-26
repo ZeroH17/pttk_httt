@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Get, Query, Param, Patch, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Query,
+  Param,
+  Patch,
+  BadRequestException,
+} from '@nestjs/common';
 import { DonHangService } from './donhang.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { validateOrReject } from 'class-validator';
@@ -9,50 +18,25 @@ import { OrderStatus } from '../entities/donhang.entity';
 export class DonHangController {
   constructor(private readonly donHangService: DonHangService) {}
 
-  // Tạo hóa đơn + đơn hàng
+  // Tạo đơn hàng
   @Post()
   async createOrder(@Body() body: any) {
     const dto = plainToInstance(CreateOrderDto, body);
     await validateOrReject(dto).catch(err => { throw err });
 
-    const result = await this.donHangService.createOrder(dto);
-
-    return {
-      message: result.message,
-      MaHoaDon: result.MaHoaDon,
-      MaDonHang: result.MaDonHang,
-    };
+    return this.donHangService.createOrder(dto);
   }
 
-  // Lấy tất cả đơn hàng
+  // Lấy tất cả
   @Get()
   async getAll() {
     return this.donHangService.getAllOrders();
   }
 
-  // Tìm theo ngày
-  @Get('search')
-  async searchByDate(@Query('from') from: string, @Query('to') to: string) {
-    if (!from || !to) throw new BadRequestException('Thiếu tham số from hoặc to');
-    return this.donHangService.searchOrdersByDate(from, to);
-  }
-
-  // Lấy theo Mã Đơn Hàng
+  // Lấy theo mã đơn
   @Get(':MaDonHang')
   async getDonHangByMaDonHang(@Param('MaDonHang') MaDonHang: string) {
     return this.donHangService.findByMaDonHang(MaDonHang);
-  }
-
-  // Lấy mã đơn hàng cuối: DH001, DH002...
-  @Get('auto/last-order-code')
-  async getLastOrderCode() {
-    return this.donHangService.getLastOrderCode();
-  }
-
-  // Lấy mã hóa đơn cuối: HD001, HD002...
-  @Get('auto/last-invoice-code')
-  async getLastInvoiceCode() {
-    return this.donHangService.getLastInvoiceCode();
   }
 
   // Cập nhật trạng thái đơn hàng
@@ -61,11 +45,17 @@ export class DonHangController {
     @Param('MaDonHang') MaDonHang: string,
     @Body('status') status: string
   ) {
-    // Kiểm tra status hợp lệ
     if (!Object.values(OrderStatus).includes(status as OrderStatus)) {
-      throw new BadRequestException('Trạng thái không hợp lệ. Chỉ chấp nhận: Chờ xử lý, Đang giao, Hoàn tất');
+      throw new BadRequestException(
+        'Trạng thái không hợp lệ. Chỉ chấp nhận: PENDING, SHIPPING, COMPLETED, CANCELED',
+      );
     }
-
     return this.donHangService.updateOrderStatus(MaDonHang, status as OrderStatus);
+  }
+
+  // Hoàn đơn
+  @Post('cancel/:MaDonHang')
+  async cancelOrder(@Param('MaDonHang') MaDonHang: string) {
+    return this.donHangService.cancelOrder(MaDonHang);
   }
 }

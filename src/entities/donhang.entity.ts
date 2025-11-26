@@ -5,6 +5,7 @@ export enum OrderStatus {
   PENDING = 'Chờ xử lý',
   SHIPPING = 'Đang giao',
   COMPLETED = 'Hoàn tất',
+  CANCELED = 'Hoàn đơn',
 }
 
 @Entity('donhang')

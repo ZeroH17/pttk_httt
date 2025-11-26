@@ -69,7 +69,7 @@ export class KhachHangService {
     return user;
   }
 
-  // 🔹 Khóa hoặc mở khóa tài khoản
+  // Khóa hoặc mở khóa tài khoản
   async toggleLock(maKH: string) {
     const user = await this.repo.findOne({ where: { MaKhachHang: maKH } });
     if (!user) throw new NotFoundException("Không tìm thấy khách hàng");
@@ -77,14 +77,5 @@ export class KhachHangService {
     user.isLocked = !user.isLocked;
     await this.repo.save(user);
     return { MaKhachHang: user.MaKhachHang, isLocked: user.isLocked };
-  }
-
-  // 🔹 Xóa tài khoản
-  async remove(maKH: string) {
-    const user = await this.repo.findOne({ where: { MaKhachHang: maKH } });
-    if (!user) throw new NotFoundException("Không tìm thấy khách hàng");
-
-    await this.repo.delete({ MaKhachHang: maKH });
-    return { message: "Xóa tài khoản thành công" };
   }
 }
